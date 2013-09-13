@@ -1,0 +1,28 @@
+<% include header.html %>
+
+<script>
+function updateData()
+{
+	$.get('/sensors', function(data) {
+	 	var html= "<table class='table'><thead><tr><th>Name</th><th>Value</th><th>Last update</th></tr></thead>";
+	        $.each(data, function(index) {
+		    var d = moment(data[index].time).format('DD/MM-YYYY HH:MM');
+	            html += "<tr><td>"+data[index].id + "</td><td>" + numeral(data[index].value).format('0.00') + "</td><td>"+d+"</td></tr>";
+	        });
+	        html +=	"</table>";
+		$("#data").html(html);
+	});
+}
+
+updateData();
+setInterval("updateData()", 5000);
+</script>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <h2>Sensors</h2>
+          <p id="data"></p>
+        </div>
+      </div>
+
+<% include footer.html %>

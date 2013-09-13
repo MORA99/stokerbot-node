@@ -1,0 +1,12 @@
+{
+  "name": "BeagleBot",
+  "description": "Stokerbot meet Beaglebone",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.4",
+    "ds18b20":"0",
+    "ejs":"0.8",
+    "async":"0.2.9"
+  }
+}
