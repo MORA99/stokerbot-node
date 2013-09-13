@@ -1,3 +1,5 @@
-exports.index = function(req, res) {
-	res.send('<h2>Index page!</h2>');
-}
+exports.index = function(req,res){ res.render('index'); }
+
+module.exports.sensors = function(req, res) {
+  res.json(global.sm.list());
+};

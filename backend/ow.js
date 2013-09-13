@@ -1,7 +1,7 @@
-var sense = require('ds18b20'),
-    async = require('async');
+var sense = require('ds18b20');
+var async = require('async');
+var sm = require('../backend/sensorManager.js');
 
-exports.start = function(sm) {
 	setInterval(function() {
 		sense.sensors(function(err, ids) {
                    async.each(ids, function(id, cb) {
@@ -12,4 +12,3 @@ exports.start = function(sm) {
 		   });
 		});
 	}, 10000);
-}

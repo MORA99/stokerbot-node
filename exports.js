@@ -1,0 +1,1 @@
+require('./exports/stokerbot.js');
