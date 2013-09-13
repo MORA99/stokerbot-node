@@ -1,0 +1,50 @@
+<% include ../header.html %>
+
+<script>
+function updateData()
+{
+	$.get('/admin/sysinfoajax', function(data) {
+	 	var html= "<table class='table'><thead><tr><th>Name</th><th>Value</th></tr></thead>";
+
+		var l1 = numeral(data['loadavg'][0]).format('0.00');
+                var l2 = numeral(data['loadavg'][1]).format('0.00');
+                var l3 = numeral(data['loadavg'][2]).format('0.00');
+	
+		var uptime = moment.duration(data['uptime'], 'seconds').humanize();
+
+		var usedmem = numeral((data['totalmem'] - data['freemem']) / 1024 / 1024).format('0');
+		var totalmem = numeral(data['totalmem'] / 1024 / 1024).format('0');
+
+		var ip = '';
+		data['network']['eth0'].forEach(function(entry) {
+			if (entry.family == 'IPv4') ip=entry.address;
+		});
+
+    
+                html += "<tr><td>Load average</td><td>" + l1 + "&nbsp;" + l2 + "&nbsp;" + l3 + "</td></tr>";
+                html += "<tr><td>Uptime</td><td>" + uptime + "</td></tr>";
+                html += "<tr><td>Memory</td><td>" + usedmem+"/"+totalmem + "</td></tr>";
+
+                html += "<tr><td>Hostname</td><td>" + data['hostname'] + "</td></tr>";
+                html += "<tr><td>IP</td><td>" + ip + "</td></tr>";
+
+                html += "<tr><td>Type</td><td>" + data['type'] + "</td></tr>";
+                html += "<tr><td>Release</td><td>" + data['release'] + "</td></tr>";
+
+	        html +=	"</table>";
+		$("#data").html(html);
+	});
+}
+
+updateData();
+setInterval("updateData()", 5000);
+</script>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <h2>Sensors</h2>
+          <p id="data">&nbsp;</p>
+        </div>
+      </div>
+
+<% include ../footer.html %>

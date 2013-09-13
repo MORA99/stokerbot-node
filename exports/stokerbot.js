@@ -40,7 +40,6 @@ client.on('close', function() {
 
 function sendSensor(name, value)
 {
-	console.log("SS "+name+"("+value+")");
 	if (connected && clientid != '')
 		client.write('{"command":"sensor","value":[{"name":"'+name+'","value":"'+value+'"}]}\r\n');
 }

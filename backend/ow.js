@@ -11,4 +11,4 @@ var sm = require('../backend/sensorManager.js');
                       });
 		   });
 		});
-	}, 10000);
+	}, 2000);

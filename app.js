@@ -8,9 +8,17 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public/'));
 
 
+
+
+
+
+
 //Routes
 app.get('/', routes.index);
-app.get("/sensors", routes.sensors);
+app.get('/sensors', routes.sensors);
+
+app.get('/admin/sysinfo', routes.sysinfo);
+app.get('/admin/sysinfoajax', routes.sysinfoajax);
 
 
 //Listen
