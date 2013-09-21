@@ -1,0 +1,84 @@
+<% include ../header.html %>
+<%
+ var aselect = new Array();
+ for(var i=0; i<alarms.length; i++) {
+  aselect.push({'value':alarms[i].id,'text':alarms[i].id});
+ }
+%>
+<script>
+    var sensors = <%- JSON.stringify(sensors) %>;
+    var alarms = <%- JSON.stringify(alarms) %>;
+
+$(function() {
+  $('#add').click(function(e) {  
+    e.preventDefault();
+
+    var new_row = $('<tr>\
+                         <td>\
+                             id\
+                         </td>\
+                         <td>\
+                             source\
+                         </td>\
+                         <td>\
+                             cmp\
+                         </td>\
+                         <td>\
+                             val\
+                         </td>\
+                         <td>\
+                             action\
+                         </td>\
+                      </tr>');
+    new_row.appendTo($('#alarms'));
+  });
+});
+
+
+</script>
+
+      <div class="row">
+        <div>
+          <h2>Alarms</h2>
+          <p>
+		<form method="POST">
+                <input type="button" value="New" id="add" class="btn btn-success">
+                <input type="submit" value="Save" id="save" class="btn btn-primary">
+
+		<table id="alarms" class="table table-striped">
+		<thead><tr><th>ID</th><th>Source</th><th>Compare</th><th>Compare against</th><th>Action-target</th>
+		<th>Target state</th><th>Reverse?</th><th>Active</th><th>Action</th></tr></thead>
+		<% for(var i=0; i<alarms.length; i++) {%>
+		   <tr>
+		     <td><%= alarms[i].id %></td><td>
+			<select name="source">
+				<% for(var s=0; s<sensors.length; s++) {%>
+				<option value="<%=sensors[s].id %>"
+				<% if (sensors[s].id == alarms[i].source) { %>
+					selected
+				<% } %>
+				>sensors[s].id</option>
+			<% } %>
+			</select>
+		     </td><td>
+			<select>
+			<option>&lt;</option>
+			<option>=</option>
+			<option>!=</option>
+			<option>&gt;</option>
+			</select>
+			<%= alarms[i].cmp %>
+
+		     </td>
+		     <td><%= alarms[i].val %></td>
+                     <td><%= alarms[i].target %></td><td><%= alarms[i].targetstate %></td><td><%= alarms[i].targetreverse %></td><td><%= alarms[i].active %></td>
+		     <td>Delete</td>
+		   </tr>
+		<% } %>		
+		</table>
+		</form>
+	  </p>
+        </div>
+      </div>
+
+<% include ../footer.html %>

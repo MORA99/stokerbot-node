@@ -1,1 +1,3 @@
-require('./backend/ow.js');
+require('./sensors/ow.js');
+require('./sensors/virtualSensors.js');
+require('./sensors/gpio.js');

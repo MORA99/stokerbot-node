@@ -53,7 +53,7 @@ function sendSensors()
 }
 
 setInterval(sendSensors, 30000);//Send sensors every 30secs even if not changed
-setInterval(connect, 60000);//Prune sensors when no data seen in 60seconds
+setInterval(connect, 60000);//Retry connection to stokerlog.dk every minute if its failed
 connect();//Initial connect attempt
 
 sm.events.on("newSensor", function(id, value) { sendSensor(id, value); });

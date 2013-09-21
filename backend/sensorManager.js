@@ -22,8 +22,8 @@ exports.add = function(id, value)
 	var sensor = exports.get(id);
 	if (sensor == null)
 	{
-	        exports.events.emit('newSensor', id, value);
 		sensors.push(new Sensor(id, value, new Date()));
+                exports.events.emit('newSensor', id, value);
 	}
 	else
 	{
@@ -34,6 +34,14 @@ exports.add = function(id, value)
                 exports.events.emit('sensorUpdate', id, value);
                 if (value != oldvalue) exports.events.emit('sensorChange', id, oldvalue, value);
 	}
+}
+
+//Sensor lives, but no data avaliable (avoid purge)
+exports.ping = function(id)
+{
+	var sensor = exports.get(id);
+	sensor.time = new Date();
+	exports.events.emit('sensorUpdate', id, sensor.value);
 }
 
 exports.get = function(id)

@@ -10,7 +10,8 @@ function updateData()
                 var l2 = numeral(data['loadavg'][1]).format('0.00');
                 var l3 = numeral(data['loadavg'][2]).format('0.00');
 	
-		var uptime = moment.duration(data['uptime'], 'seconds').humanize();
+		var d = moment.duration(data['uptime'], 'seconds');
+		var uptime = d.days()+"day, "+d.hours()+":"+d.minutes()+":"+d.seconds();
 
 		var usedmem = numeral((data['totalmem'] - data['freemem']) / 1024 / 1024).format('0');
 		var totalmem = numeral(data['totalmem'] / 1024 / 1024).format('0');
