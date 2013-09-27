@@ -1,21 +1,13 @@
 var net = require('net');
-var fs = require("fs");
 var sm = require('../backend/sensorManager.js');
+var constants = require('../constants.js');
 
 var HOST = 'web.xen1.dk';
 var PORT = 8888;
 
 var client = new net.Socket();
 var connected = false;
-var clientid = '';
-
-fs.readFile('/sys/class/net/eth0/address', 'utf8', function read(err, data) {
-    if (err) {
-        throw err;
-    }
-    clientid = data.replace(/\s/g, "");
-    connect();
-});
+var clientid = constants.clientid;
 
 function connect()
 {

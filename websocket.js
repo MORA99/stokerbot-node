@@ -17,9 +17,13 @@ exports.addListener = function(soc)
 }
 
 sendSensor = function(id, val) {
-	listeners.forEach(function(entry){
-	  entry.emit('sensor.update', { "id": id, "value": val });
-	});
+	var sensor = sm.get(id);
+	if (sensor != undefined && sensor.host == '')
+	{
+		listeners.forEach(function(entry){
+		  entry.emit('sensor.update', { "id": id, "value": val });
+		});
+	}
 }
 
 sendSensorList = function()

@@ -10,7 +10,7 @@ exports.index = function(req,res) {
 }
 
 module.exports.sensors = function(req, res) {
-  res.json(sm.list());
+  res.json(sm.list(60, false));
 };
 
 module.exports.admsensors = function(req,res) {
@@ -47,7 +47,7 @@ while (typeof req.body['id'+id] != "undefined")
 
 module.exports.admalarms = function(req,res) {
 	res.render('admin/alarms', {
-		sensors: sm.list(),
+		sensors: sm.list(300, true),
 		alarms: am.list()
 	});
 }

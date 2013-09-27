@@ -1,7 +1,7 @@
 <% include ../header.html %>
 
 <script>
-    var sensors = <%- JSON.stringify(sensors) %>;
+    var sensors = _.sortBy(<%- JSON.stringify(sensors) %>, 'host');
     var alarms = <%- JSON.stringify(alarms) %>;
     var lines = 0;
 
@@ -13,11 +13,26 @@ function isSel(a, b)
 
 function sensorSelect(name, id)
 {
-        var res = "<select name='"+name+"'>";
+        var res = "<select name='"+name+"'><optgroup label='Local'>";
 	sensors.forEach(function (entry) {
-		res += "<option value='"+entry.id+"' "+isSel(entry.id,id)+">"+entry.id+"</option>";
+		if (entry.host == '') res += "<option value='"+entry.id+"' "+isSel(entry.id,id)+">"+entry.name+"</option>";
 	});
-	res += "</select>";
+
+	var grp = '';
+
+        sensors.forEach(function (entry) {
+		if (entry.host != '')
+		{
+			if (entry.host != grp)
+			{
+				
+			        res += "</optgroup><optgroup label='"+entry.host+"'>";
+				grp = entry.host;
+			}
+			res += "<option value='"+entry.id+"' "+isSel(entry.id,id)+">"+entry.name+"</option>";
+		}
+        });
+        res += "</optgroup></select>";
         return res;
 }
 

@@ -4,6 +4,8 @@ sm.events.on("sensorUpdate", function(id, value) { console.log("Sensor update: "
 sm.events.on("sensorChange", function(id, oldvalue, newvalue) { console.log("Sensor change: "+id+" ("+oldvalue+" => "+newvalue+")"); });
 */
 
+var _ = require('underscore');
+
 var nconf = require('nconf');
 nconf.file('configuration.json');
 
@@ -47,9 +49,9 @@ exports.listPostProcessors = function() {
 	return arr;
 }
 
-function Sensor(id, value, time) {
+function Sensor(id, value, time, host, name) {
   this.id    = id;
-  this.name  = '';
+  this.name  = name;
   this.value = value;
   this.time  = time;
   this.postprocessor = '';
@@ -59,6 +61,7 @@ function Sensor(id, value, time) {
   this.arg4 = '';
   this.arg5 = '';
   this.output = false;
+  this.host = host;
 }
 
 var sensors = nconf.get('sensors');
@@ -71,21 +74,27 @@ var util   = require('util');
  
 exports.events = new events.EventEmitter;
 
-exports.add = function(id, value, output)
+var save = _.throttle(function() {
+	nconf.set('sensors', sensors);
+        nconf.save();
+}, 1000);
+
+exports.add = function(id, value, output, host, alias)
 {
+	if (host == undefined) host = '';
+	if (alias == undefined) alias = id;
+
 	var sensor = exports.get(id);
 	if (sensor == null)
 	{
-		sensors.push(new Sensor(id, value, new Date()));
+		sensors.push(new Sensor(id, value, new Date(), host, alias));
                 exports.events.emit('newSensor', id, value);
                 if (output != undefined)
 		{
 			sensor = exports.get(id);
 			sensor.output = output;
 		}
-
-	        nconf.set('sensors', sensors);
-		nconf.save();
+		save();
 	}
 	else
 	{
@@ -135,27 +144,19 @@ exports.ping = function(id)
 
 exports.get = function(id)
 {
-	var res = null;
-	sensors.forEach(function(entry) {
-		if (entry.id == id)
-			res=entry;
-	});
-	return res;
+	return _.find(sensors, function(entry){ return entry.id == id; });
 }
 
-exports.list = function(duration)
+exports.list = function(duration, remote)
 {
 	if (typeof duration == "undefined") duration = 60;
+        if (typeof remote == "undefined") remote = false;
 	var arr = new Array();
         var n = new Date();
 
-        sensors.forEach(function(entry){
-                var diff = (n.getTime() - entry.time.getTime()) / 1000;
-                if (diff <= duration)
-                        arr.push(entry);
-        });	
-
-	return arr;
+	return sensors.filter(function(entry){
+		return ((n.getTime() - entry.time.getTime()) / 1000) <= duration && (remote == true || (remote == false && entry.host == ''));
+	});
 }
 
 exports.delete = function(id)
@@ -192,3 +193,6 @@ exports.prune = function(secs)
 
 setInterval(function(){exports.prune(60);},60000);
 */
+
+//setInterval(function(){console.log(sensors);},10000);
+

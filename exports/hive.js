@@ -1,15 +1,8 @@
-var fs = require("fs");
 var sm = require('../backend/sensorManager.js');
+var constants = require('../constants.js');
 
-var clientid = '';
+var clientid = constants.clientid;
 var connected = false;
-
-fs.readFile('/sys/class/net/eth0/address', 'utf8', function read(err, data) {
-    if (err) {
-        throw err;
-    }
-    clientid = data.replace(/\s/g, "");
-});
 
 var io = require('socket.io-client'),
 
@@ -38,14 +31,14 @@ connected = true;
 });
 
 socket.on('sensor', function (host, data) {
-  console.log(host, data);
   var id = host+'_'+data.name;
-  sm.add(data.name,data.value,0,host,data.name);
+  sm.add(id,data.value,0,host,data.name);
 });
 
 function sendSensor(id, value)
 {
-	if (connected)
+	var sensor = sm.get(id);
+	if (connected && sensor.host == '')
 		socket.emit('sensor', [{'name':id, 'value':value}]);
 }
 
