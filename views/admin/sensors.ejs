@@ -1,0 +1,121 @@
+<% include ../header.html %>
+
+<script>
+    var sensors = <%- JSON.stringify(sensors) %>;
+    var postprocessors = <%- JSON.stringify(postprocessors) %>;
+
+    var lines = 0;
+
+function isSel(a, b)
+{
+	if (a == b) return " selected ";
+	return "";
+}
+
+function sensorSelect(name, id)
+{
+        var res = "<select name='"+name+"'>";
+	sensors.forEach(function (entry) {
+		res += "<option value='"+entry.id+"' "+isSel(entry.id,id)+">"+entry.id+"</option>";
+	});
+	res += "</select>";
+        return res;
+}
+
+function ppSelect(name, pp, line, output)
+{	
+	if (output) return '&nbsp;';
+	var res = "<select name='"+name+"' data-line='"+line+"'><option value=''>None</option>";
+
+	postprocessors.forEach(function (entry) {
+	        res += "<option value='"+entry.name+"' "+isSel(entry.name,pp)+">"+entry.name+" ("+entry.desc+")</option>";
+	});
+
+        res += "</select>";
+	return res;
+}
+
+function targetSelect(name, target)
+{
+        var res = "<select name='"+name+"'>\
+        <option "+isSel(target,'DO1')+" value='D1'>D1</option>\
+        <option "+isSel(target,'DO2')+" value='D2'>D2</option>\
+        <option "+isSel(target,'DO3')+" value='D3'>D3</option>\
+        <option "+isSel(target,'DO4')+" value='D4'>D4</option>\
+        </select>";
+        return res;
+}
+
+function chkbox(name, val)
+{
+	var res = "<input type='checkbox' name='"+name+"' value='1'";
+	if (val == 1)
+		res += " checked ";
+	res += " />";
+	return res;
+}
+
+function addRow(sensor)
+{
+	var row = '\
+                   <tr>\
+                     <td><input type="hidden" name="id'+lines+'" value="'+sensor.id+'">'+sensor.id+'</td> \
+		     <td><input type="text" name="name'+lines+'" value="'+sensor.name+'"></td>\
+		     <td>'+sensor.value+'</td>\
+                     <td>'+ppSelect("postprocessor"+lines, sensor.postprocessor, lines, sensor.output)+'</td>\
+                     <td><input type="text" id="arg1'+lines+'" name="arg1'+lines+'" value="'+sensor.arg1+'" size=10></td>\
+                     <td><input type="text" id="arg2'+lines+'" name="arg2'+lines+'" value="'+sensor.arg2+'" size=10></td>\
+                     <td><input type="text" id="arg3'+lines+'" name="arg3'+lines+'" value="'+sensor.arg3+'" size=10></td>\
+                     <td><input type="text" id="arg4'+lines+'" name="arg4'+lines+'" value="'+sensor.arg4+'" size=10></td>\
+                     <td><input type="text" id="arg5'+lines+'" name="arg5'+lines+'" value="'+sensor.arg5+'" size=10></td>\
+                     <td>'+chkbox("delete"+lines, 0)+'</td>\
+                   </tr>\
+	';
+
+	new_row = $(row);
+	new_row.appendTo($('#sensors'));
+	lines++;
+}
+</script>
+
+      <div class="row">
+        <div>
+          <h2>Sensors</h2>
+          <p>
+		<form method="POST">
+                <input type="submit" value="Save" id="save" class="btn btn-primary">
+
+		<table id="sensors" class="table table-striped">
+		<thead><tr><th>ID</th><th>Name</th><th>Value</th><th>Post processor</th><th>Arg1</th><th>Arg2</th><th>Arg3</th><th>Arg4</th><th>Arg5</th><th>Delete</th></tr></thead>
+
+		<script>
+			sensors.forEach(addRow);
+		</script>
+
+		</table>
+		</form>
+	  </p>
+        </div>
+      </div>
+<script>
+$("select").change( function(){
+        var id = $(this).data("line");
+	var name = $(this).val();
+
+	var pp;
+	postprocessors.forEach(function(entry) {
+		if (entry.name == name) pp=entry;
+	});
+	if (typeof pp == "undefined")
+	{
+		pp = {'arg1':'','arg2':'','arg3':'','arg4':'','arg5':''};
+	}
+
+        $("#arg1"+id).val('').attr('placeholder', pp.arg1);
+        $("#arg2"+id).val('').attr('placeholder', pp.arg2);
+        $("#arg3"+id).val('').attr('placeholder', pp.arg3);
+        $("#arg4"+id).val('').attr('placeholder', pp.arg4);
+        $("#arg5"+id).val('').attr('placeholder', pp.arg5);
+});
+</script>
+<% include ../footer.html %>
