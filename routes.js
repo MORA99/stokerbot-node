@@ -13,14 +13,46 @@ module.exports.sensors = function(req, res) {
   res.json(sm.list());
 };
 
-module.exports.alarms = function(req,res) {
+module.exports.admsensors = function(req,res) {
+        res.render('admin/sensors', {
+                sensors: sm.list(),
+                postprocessors: sm.listPostProcessors()
+        });
+}
+
+module.exports.admsensorssave = function(req,res) {
+id = 0;
+while (typeof req.body['id'+id] != "undefined")
+{
+        var     idd = req.body['id'+id],
+                name = req.body['name'+id],
+                pp = req.body['postprocessor'+id],
+                arg1 = req.body['arg1'+id],
+                arg2 = req.body['arg2'+id],
+                arg3 = req.body['arg3'+id],
+                arg4 = req.body['arg4'+id],
+                arg5 = req.body['arg5'+id],
+                del = req.body['delete'+id];
+
+        if (typeof del != "undefined")
+                sm.delete(idd);
+        else
+                sm.config(idd,name,pp,arg1,arg2,arg3,arg4,arg5);
+
+        id++;
+}
+        res.redirect('/admin/sensors');
+}
+
+
+module.exports.admalarms = function(req,res) {
 	res.render('admin/alarms', {
 		sensors: sm.list(),
 		alarms: am.list()
 	});
 }
 
-module.exports.alarmssave = function(req,res) {
+module.exports.admalarmssave = function(req,res) {
 id = 0;
 while (typeof req.body['id'+id] != "undefined")
 {

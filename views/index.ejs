@@ -6,6 +6,9 @@
     var sensors = <%- JSON.stringify(sensors) %>;
 
 $(function() {
+displayData();
+
+
  if(window.WebSocket){
 var socket = io.connect();
 /*
@@ -15,12 +18,12 @@ var socket = io.connect('http://localhost:9999', {
   'max reconnection attempts': 1000
 });
 */
-
+/*
     socket.on('sensor.load', function(data) {
 	sensors = data;
 	displayData();
     });
-
+*/
     socket.on('sensor.update', function (data) {
 	var found = false;
 

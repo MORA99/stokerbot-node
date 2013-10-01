@@ -25,12 +25,14 @@ var routes = require('./routes.js');
 app.get('/', routes.index);
 app.get('/sensors', routes.sensors);
 
-app.get('/admin/alarms', routes.alarms);
+app.get('/admin/alarms', routes.admalarms);
+app.post('/admin/alarms', routes.admalarmssave);
+app.get('/admin/sensors', routes.admsensors);
+app.post('/admin/sensors', routes.admsensorssave);
+
 
 app.get('/admin/sysinfo', routes.sysinfo);
 app.get('/admin/sysinfoajax', routes.sysinfoajax);
-
-app.post('/admin/alarms', routes.alarmssave);
 
 
 
@@ -46,6 +48,10 @@ server.listen(app.get('port'), function(){
 
 //Socket.io
 var io = require("socket.io").listen(server);
+io.set('browser client gzip', false);
+io.set('browser client minification', true);
+io.set('browser client etag', true); 
+
 io.set('log level', 1);
 var ws = require('./websocket.js');
 

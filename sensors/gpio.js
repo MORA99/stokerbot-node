@@ -16,7 +16,7 @@ inputs.push({"id":"DI4", "sensor":undefined, "gpio":"P8_17"});
 //Init sensors
 outputs.forEach(function(entry){
 	b.pinMode(entry.gpio, b.OUTPUT);
-	sm.add(entry.id, 0);
+	sm.add(entry.id, 0, true);
 	entry.sensor = sm.get(entry.id);
 });
 
@@ -34,10 +34,10 @@ inputs.forEach(function(entry){
 setInterval(function() {
 	inputs.forEach(function(entry) {
 		b.digitalRead(entry.gpio, function (x) {
-			sm.add(entry.id, x);
+			sm.add(entry.id, x.value);
 		});
 	});
-}, 10000);
+}, 1000);
 
 
 setInterval(function() {

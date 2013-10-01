@@ -4,7 +4,15 @@ sm.events.on("sensorUpdate", function(id, value) { console.log("Sensor update: "
 sm.events.on("sensorChange", function(id, oldvalue, newvalue) { console.log("Sensor change: "+id+" ("+oldvalue+" => "+newvalue+")"); });
 */
 
-require('numeral');
+var nconf = require('nconf');
+nconf.file('configuration.json');
+
+nconf.defaults({
+    'sensors': []
+});
+
+
+var numeral = require('numeral');
 
 function PostProcessor(name, desc, arg1, arg2, arg3, arg4, arg5, fnc)
 {
@@ -41,6 +49,7 @@ exports.listPostProcessors = function() {
 
 function Sensor(id, value, time) {
   this.id    = id;
+  this.name  = '';
   this.value = value;
   this.time  = time;
   this.postprocessor = '';
@@ -49,52 +58,71 @@ function Sensor(id, value, time) {
   this.arg3 = '';
   this.arg4 = '';
   this.arg5 = '';
+  this.output = false;
 }
 
-var sensors = new Array();
+var sensors = nconf.get('sensors');
+sensors.forEach(function(entry) {
+	entry.time = new Date(entry.time);
+});
+
 var events = require('events');
 var util   = require('util');
  
 exports.events = new events.EventEmitter;
 
-exports.add = function(id, value)
+exports.add = function(id, value, output)
 {
 	var sensor = exports.get(id);
 	if (sensor == null)
 	{
 		sensors.push(new Sensor(id, value, new Date()));
                 exports.events.emit('newSensor', id, value);
+                if (output != undefined)
+		{
+			sensor = exports.get(id);
+			sensor.output = output;
+		}
+
+	        nconf.set('sensors', sensors);
+		nconf.save();
 	}
 	else
 	{
 		var oldvalue = sensor.value;
 
-		if (sensor.postprocessor != "")
+		if (sensor.postprocessor != "" && typeof sensor.postprocessor != "undefined")
 		{
 			var pp = getPostProcessor(sensor.postprocessor);
-			value = pp.fnc(value,sensor.arg1,sensor.arg2,sensor.arg3,sensor.arg4,sensor.arg5);
+			if (typeof pp != "undefined") value = pp.fnc(value,sensor.arg1,sensor.arg2,sensor.arg3,sensor.arg4,sensor.arg5);
 		}
 
 		sensor.value = value;
 		sensor.time = new Date();
+                if (output != undefined) sensor.output = output;
 
                 exports.events.emit('sensorUpdate', id, value);
                 if (value != oldvalue) exports.events.emit('sensorChange', id, oldvalue, value);
 	}
 }
 
-exports.config = function(id, postProcessor, arg1, arg2, arg3, arg4, arg5)
+exports.config = function(id, name, postProcessor, arg1, arg2, arg3, arg4, arg5, output)
 {
         var sensor = exports.get(id);
         if (sensor != null)
 	{
-		sensor.postProcessor = postProcessor;
+		sensor.name = name;
+		sensor.postprocessor = postProcessor;
 		sensor.arg1 = arg1;
                 sensor.arg2 = arg2;
                 sensor.arg3 = arg3;
                 sensor.arg4 = arg4;
                 sensor.arg5 = arg5;
 	}
+
+	console.log("Saving sensors ...");
+	nconf.set('sensors', sensors);
+	nconf.save();
 }
 
 //Sensor lives, but no data avaliable
@@ -129,6 +157,17 @@ exports.list = function(duration)
 
 	return arr;
 }
+
+exports.delete = function(id)
+{
+	var newArray = sensors.slice(0);
+	sensors = new Array();
+
+	newArray.forEach(function(entry){
+		if (entry.id != id) sensors.push(entry);
+	});
+}
+
 
 /*
 exports.prune = function(secs)

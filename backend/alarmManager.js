@@ -1,4 +1,5 @@
-var nconf = require('nconf'); nconf.file('alarms.json');
+var nconf = require('nconf');
+nconf.file('configuration.json');
 
 nconf.defaults({
     'alarms': []
