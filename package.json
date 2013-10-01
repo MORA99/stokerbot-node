@@ -4,10 +4,13 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "express": "3.4",
-    "ds18b20":"0",
-    "ejs":"0.8",
-    "async":"0.2",
-    "socket.io":"0.9"
+    "express": "3.4.x",
+    "ds18b20":"0.x.x",
+    "ejs":"0.8.x",
+    "async":"0.2.x",
+    "socket.io":"0.9.x",
+    "nconf":"0.6.x",
+    "bonescript":"0.2.x",
+    "require-dir":"0.1.x"
   }
 }

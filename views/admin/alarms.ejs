@@ -1,36 +1,97 @@
 <% include ../header.html %>
-<%
- var aselect = new Array();
- for(var i=0; i<alarms.length; i++) {
-  aselect.push({'value':alarms[i].id,'text':alarms[i].id});
- }
-%>
+
 <script>
     var sensors = <%- JSON.stringify(sensors) %>;
     var alarms = <%- JSON.stringify(alarms) %>;
+    var lines = 0;
+
+function isSel(a, b)
+{
+	if (a == b) return " selected ";
+	return "";
+}
+
+function sensorSelect(name, id)
+{
+        var res = "<select name='"+name+"'>";
+	sensors.forEach(function (entry) {
+		res += "<option value='"+entry.id+"' "+isSel(entry.id,id)+">"+entry.id+"</option>";
+	});
+	res += "</select>";
+        return res;
+}
+
+function alarmSelect(name, type)
+{
+	var res = "<select name='"+name+"'>\
+        <option "+isSel(type,'<')+" value='<'>&lt;</option>\
+        <option "+isSel(type,'=')+" value='='>=</option>\
+        <option "+isSel(type,'!=<')+" value='!='>!=</option>\
+        <option "+isSel(type,'>')+" value='>'>&gt;</option>\
+        </select>";
+	return res;
+}
+
+function targetSelect(name, target)
+{
+        var res = "<select name='"+name+"'>\
+        <option "+isSel(target,'DO1')+" value='D1'>D1</option>\
+        <option "+isSel(target,'DO2')+" value='D2'>D2</option>\
+        <option "+isSel(target,'DO3')+" value='D3'>D3</option>\
+        <option "+isSel(target,'DO4')+" value='D4'>D4</option>\
+        </select>";
+        return res;
+}
+
+function targetStateSelect(name, state)
+{
+        var res = "<select name='"+name+"'>\
+        <option "+isSel(state,'1')+" value='1'>HIGH</option>\
+        <option "+isSel(state,'0')+" value='0'>LOW</option>\
+        </select>";
+        return res;
+}
+
+function chkbox(name, val)
+{
+	var res = "<input type='checkbox' name='"+name+"' value='1'";
+	if (val == 1)
+		res += " checked ";
+	res += " />";
+	return res;
+}
+
+function addRow(alarm)
+{
+	if (typeof alarm.val  == "undefined") alarm.val = "";
+        if (typeof alarm.name == "undefined") alarm.name = "";
+        if (typeof alarm.id   == "undefined") alarm.id = "";
+
+
+	var row = '\
+                   <tr>\
+                     <td><input type="hidden" name="id'+lines+'" value="'+alarm.id+'"><input type="text" name="name'+lines+'" value="'+alarm.name+'"></td>\
+		     <td>'+sensorSelect("source"+lines, alarm.source)+'</td>\
+		     <td>'+alarmSelect("cmp"+lines, alarm.cmp)+'</td>\
+                     <td><input name="cmptarget'+lines+'" type="text" size=4 value="'+alarm.val+'"></td>\
+                     <td>'+targetSelect("target"+lines, alarm.target)+'</td>\
+		     <td>'+targetStateSelect("targetstate"+lines, alarm.targetstate)+'</td>\
+		     <td>'+chkbox("targetreverse"+lines, alarm.targetreverse)+'</td>\
+		     <td>'+chkbox("active"+lines, alarm.active)+'</td>\
+                     <td>'+chkbox("delete"+lines, 0)+'</td>\
+                   </tr>\
+	';
+
+	new_row = $(row);
+	new_row.appendTo($('#alarms'));
+	lines++;
+}
+
 
 $(function() {
   $('#add').click(function(e) {  
     e.preventDefault();
-
-    var new_row = $('<tr>\
-                         <td>\
-                             id\
-                         </td>\
-                         <td>\
-                             source\
-                         </td>\
-                         <td>\
-                             cmp\
-                         </td>\
-                         <td>\
-                             val\
-                         </td>\
-                         <td>\
-                             action\
-                         </td>\
-                      </tr>');
-    new_row.appendTo($('#alarms'));
+    addRow(new Array());
   });
 });
 
@@ -47,34 +108,12 @@ $(function() {
 
 		<table id="alarms" class="table table-striped">
 		<thead><tr><th>ID</th><th>Source</th><th>Compare</th><th>Compare against</th><th>Action-target</th>
-		<th>Target state</th><th>Reverse?</th><th>Active</th><th>Action</th></tr></thead>
-		<% for(var i=0; i<alarms.length; i++) {%>
-		   <tr>
-		     <td><%= alarms[i].id %></td><td>
-			<select name="source">
-				<% for(var s=0; s<sensors.length; s++) {%>
-				<option value="<%=sensors[s].id %>"
-				<% if (sensors[s].id == alarms[i].source) { %>
-					selected
-				<% } %>
-				>sensors[s].id</option>
-			<% } %>
-			</select>
-		     </td><td>
-			<select>
-			<option>&lt;</option>
-			<option>=</option>
-			<option>!=</option>
-			<option>&gt;</option>
-			</select>
-			<%= alarms[i].cmp %>
+		<th>Target state</th><th>Reverse?</th><th>Active</th><th>Delete</th></tr></thead>
 
-		     </td>
-		     <td><%= alarms[i].val %></td>
-                     <td><%= alarms[i].target %></td><td><%= alarms[i].targetstate %></td><td><%= alarms[i].targetreverse %></td><td><%= alarms[i].active %></td>
-		     <td>Delete</td>
-		   </tr>
-		<% } %>		
+		<script>
+			alarms.forEach(addRow);
+		</script>
+
 		</table>
 		</form>
 	  </p>

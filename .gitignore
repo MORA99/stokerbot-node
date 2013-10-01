@@ -17,3 +17,5 @@ thumbs.db
 *.log
 node_modules/
 config.json
+alarms.json
+sensors.json

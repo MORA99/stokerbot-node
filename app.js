@@ -19,6 +19,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var routes = require('./routes.js');
 
+
+
 //Routes
 app.get('/', routes.index);
 app.get('/sensors', routes.sensors);
@@ -27,6 +29,11 @@ app.get('/admin/alarms', routes.alarms);
 
 app.get('/admin/sysinfo', routes.sysinfo);
 app.get('/admin/sysinfoajax', routes.sysinfoajax);
+
+app.post('/admin/alarms', routes.alarmssave);
+
+
+
 
 
 //Listen
@@ -64,3 +71,7 @@ require('./exports.js');
 
 //Sensor sources
 require('./sensors.js');
+
+//User scripts
+var requireDir = require('require-dir');
+requireDir('./userscripts'); 

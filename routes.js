@@ -20,6 +20,34 @@ module.exports.alarms = function(req,res) {
 	});
 }
 
+module.exports.alarmssave = function(req,res) {
+id = 0;
+while (typeof req.body['id'+id] != "undefined")
+{
+	var 	idd = req.body['id'+id],
+		name = req.body['name'+id],
+		source = req.body['source'+id],
+		cmp = req.body['cmp'+id],
+		cmptarget = req.body['cmptarget'+id],
+		target = req.body['target'+id],
+		targetstate = req.body['targetstate'+id],
+		targetreverse = req.body['targetreverse'+id],
+		active = req.body['active'+id],
+		del = req.body['delete'+id];
+
+	if (typeof active == "undefined") active = 0;
+        if (typeof targetreverse == "undefined") targetreverse = 0;
+
+	if (typeof del != "undefined")
+		am.delete(idd);
+	else
+		am.add(idd,name,source,cmp,cmptarget,target,targetstate,targetreverse,active);
+
+	id++;
+}
+	res.redirect('/admin/alarms');
+}
+
 module.exports.sysinfo = function(req, res) { res.render('admin/sysinfo'); }
 
 module.exports.sysinfoajax = function(req, res) {
