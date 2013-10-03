@@ -1,47 +1,7 @@
 <% include header.html %>
 
-<script src="/socket.io/socket.io.js"></script>
-
 <script>
     var sensors = <%- JSON.stringify(sensors) %>;
-
-$(function() {
-displayData();
-
-
- if(window.WebSocket){
-var socket = io.connect();
-/*
-var socket = io.connect('http://localhost:9999', {
-  'reconnect': true,
-  'reconnection delay': 1000,
-  'max reconnection attempts': 1000
-});
-*/
-/*
-    socket.on('sensor.load', function(data) {
-	sensors = data;
-	displayData();
-    });
-*/
-    socket.on('sensor.update', function (data) {
-	var found = false;
-
-        $.each(sensors, function(index) {
-		if (data.id == sensors[index].id)
-		{
-			sensors[index].value = data.value;
-			found = true;
-		}
-        });
-	if (!found) sensors.push(data);
-	displayData();
-    });
- } else {
-  setInterval("updateData()", 5000);
- }
-});
-
 
 function updateData()
 {
@@ -56,7 +16,10 @@ function displayData()
  	var html= "<table class='table'><thead><tr><th>Name</th><th>Value</th><th>Last update</th></tr></thead>";
         $.each(sensors, function(index) {
 	    var d = moment(sensors[index].time).format('DD/MM-YYYY HH:mm');
-            html += "<tr><td>"+sensors[index].id + "</td><td>" + numeral(sensors[index].value).format('0.00') + "</td><td>"+d+"</td></tr>";
+	    var tag = sensors[index].id;
+	    if (sensors[index].name != "" && typeof sensors[index].name != "undefined")
+		tag = sensors[index].name;
+            html += "<tr><td>"+tag + "</td><td>" + numeral(sensors[index].value).format('0.00') + "</td><td>"+d+"</td></tr>";
         });
         html +=	"</table>";
 	$("#data").html(html);
@@ -69,5 +32,50 @@ function displayData()
           <p id="data"></p>
         </div>
       </div>
+
+<script>
+displayData();
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+$(function() {
+ if(window.WebSocket){
+    var socket = io.connect();
+/*
+var socket = io.connect("http://localhost", {
+    'port': 9999,
+    'connect timeout': 3000,
+    'reconnect': true,
+    'reconnection delay': 2000,
+    'max reconnection attempts': 10000,
+    'force new connection':true
+});
+*/ 
+
+/*
+    socket.on('sensor.load', function(data) {
+        sensors = data;
+        displayData();
+    });
+*/
+    socket.on('sensor.update', function (data) {
+        var found = false;
+
+        $.each(sensors, function(index) {
+                if (data.id == sensors[index].id)
+                {
+                        sensors[index].value = data.value;
+                        found = true;
+                }
+        });
+        if (!found) sensors.push(data);
+        displayData();
+    });
+ } else {
+  setInterval("updateData()", 5000);
+ }
+});
+</script>
 
 <% include footer.html %>

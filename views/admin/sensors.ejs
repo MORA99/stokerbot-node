@@ -3,23 +3,12 @@
 <script>
     var sensors = <%- JSON.stringify(sensors) %>;
     var postprocessors = <%- JSON.stringify(postprocessors) %>;
-
     var lines = 0;
 
 function isSel(a, b)
 {
-	if (a == b) return " selected ";
-	return "";
-}
-
-function sensorSelect(name, id)
-{
-        var res = "<select name='"+name+"'>";
-	sensors.forEach(function (entry) {
-		res += "<option value='"+entry.id+"' "+isSel(entry.id,id)+">"+entry.id+"</option>";
-	});
-	res += "</select>";
-        return res;
+        if (a == b) return " selected ";
+        return "";
 }
 
 function ppSelect(name, pp, line, output)
@@ -33,17 +22,6 @@ function ppSelect(name, pp, line, output)
 
         res += "</select>";
 	return res;
-}
-
-function targetSelect(name, target)
-{
-        var res = "<select name='"+name+"'>\
-        <option "+isSel(target,'DO1')+" value='D1'>D1</option>\
-        <option "+isSel(target,'DO2')+" value='D2'>D2</option>\
-        <option "+isSel(target,'DO3')+" value='D3'>D3</option>\
-        <option "+isSel(target,'DO4')+" value='D4'>D4</option>\
-        </select>";
-        return res;
 }
 
 function chkbox(name, val)

@@ -43,10 +43,12 @@ exports.add = function(id, name, source, cmp, val, target, targetval, targetreve
 	}
 	else
 	{
+		alarm.name = name;
 		alarm.source = source;
 		alarm.cmp = cmp;
 		alarm.val = val;
 		alarm.target=target;
+		alarm.targetval = targetval;
 		alarm.targetreverse = targetreverse;
 		alarm.active = active;		
 
@@ -54,6 +56,7 @@ exports.add = function(id, name, source, cmp, val, target, targetval, targetreve
 	}
 	nconf.set('alarms', alarms);
 	nconf.save();
+	handleAlarm(id);
 }
 
 exports.get = function(id)
@@ -103,7 +106,6 @@ setTimeout(function(){
 
 checkAlarms = function()
 {
-	console.log("Initial alarm check...");
                 alarms.forEach(function(entry) {
 	                handleAlarm(entry.id);
                 });
@@ -125,18 +127,16 @@ handleAlarm = function(id)
 	if (triggered)
 	{
 		console.log("Trig");
+
+                if (alarm.target != "")
+                {
+	                var st = sm.get(alarm.target);
+                        if (st != null) sm.add(alarm.target, 1);
+        	}
+
 		if (alarm.triggered == false)
 		{
 			console.log("Alarm triggered");
-
-			if (alarm.target != "")
-			{
-				console.log("Alarm %j ", alarm);
-				console.log("Target is ",alarm.target);
-				var st = sm.get(alarm.target);
-				console.log("sensor  : %j",st);
-				if (st != null) sm.add(alarm.target, 1);
-			}
 
 			exports.events.emit('alarmTriggered', id);
 			alarm.triggered = true;
@@ -144,16 +144,16 @@ handleAlarm = function(id)
 			console.log("Alarm was already triggered");
 		}
 	} else {
-		if (alarm.triggered == true)
-		{
-			console.log("Alarm stopped");
-
                         if (alarm.target != "" && alarm.targetreverse)
                         {
                                 var st = sm.get(alarm.target);
                                 if (st != null) sm.add(alarm.target, 0);
                         }
 
+
+		if (alarm.triggered == true)
+		{
+			console.log("Alarm stopped");
 			exports.events.emit('alarmStopped', id);
 			alarm.triggered = false;
 		}
