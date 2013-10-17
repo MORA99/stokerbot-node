@@ -2,6 +2,8 @@ var net = require('net');
 var sm = require('../backend/sensorManager.js');
 var constants = require('../constants.js');
 
+console.log("ID", constants);
+
 var HOST = 'web.xen1.dk';
 var PORT = 8888;
 

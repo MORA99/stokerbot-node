@@ -1,11 +1,2 @@
-require('fs');
-
-exports.clientid = '';
-
-fs.readFile('/sys/class/net/eth0/address', 'utf8', function read(err, data) {
-    if (err) {
-        throw err;
-    }
-    exports.clientid = data.replace(/\s/g, "");
-});
-
+var fs = require('fs');
+exports.clientid = fs.readFileSync('/sys/class/net/eth0/address', 'utf8').replace(/\s/g, "");
