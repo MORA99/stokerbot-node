@@ -46,7 +46,8 @@ setInterval(function() {
         });
 }, 30000);
 
-sensorChange = function(name, value) {
+sensorChange = function(sensor, value) {
+	var name = sensor.id;
         outputs.forEach(function(entry) {
                 if (entry.id == name)
 		{

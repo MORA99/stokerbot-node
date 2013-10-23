@@ -44,7 +44,7 @@ function sendSensor(sensor)
 function sendSensors()
 {
         sm.list().forEach(function(entry) {
-		sendSensor(entry.id,entry.value);
+		sendSensor(entry);
         });
 }
 
