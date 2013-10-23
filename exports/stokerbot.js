@@ -1,6 +1,7 @@
 var net = require('net');
 var sm = require('../backend/sensorManager.js');
 var constants = require('../constants.js');
+var _ = require('underscore');
 
 var HOST = 'web.xen1.dk';
 var PORT = 8888;
@@ -32,17 +33,14 @@ client.on('close', function() {
 
 function sendSensor(sensor)
 {
-	if (connected && clientid != '')
+	if (connected && clientid != '' && sensor.host == '')
 		client.write('{"command":"sensor","value":[{"name":"'+sensor.id+'","value":"'+sensor.value+'"}]}\r\n');
 }
 
 
 function sendSensors()
 {
-	sm.list().forEach(function(entry) {
-		console.log(entry);
-		if (entry.host == '') sendSensor(entry.id, entry.value);
-	});
+	_.each(sm.list(), sendSensor);
 }
 
 setInterval(sendSensors, 30000);//Send sensors every 30secs even if not changed

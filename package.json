@@ -14,6 +14,7 @@
     "require-dir":"0.1.x",
     "numeral":"1.5.x",
     "socket.io-client":"0.9.x",
-    "underscore":"1.5.x"
+    "underscore":"1.5.x",
+    "request":"2.x"
   }
 }
