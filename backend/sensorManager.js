@@ -110,8 +110,8 @@ exports.add = function(id, value, output, host, alias)
 		sensor.time = new Date();
                 if (output != undefined) sensor.output = output;
 
-                exports.events.emit('sensorUpdate', id, value);
-                if (value != oldvalue) exports.events.emit('sensorChange', id, oldvalue, value);
+                exports.events.emit('sensorUpdate', sensor);
+                if (value != oldvalue) exports.events.emit('sensorChange', sensor, oldvalue);
 	}
 }
 
@@ -139,7 +139,7 @@ exports.ping = function(id)
 {
 	var sensor = exports.get(id);
 	sensor.time = new Date();
-	exports.events.emit('sensorUpdate', id, sensor.value);
+	exports.events.emit('sensorUpdate', sensor.value);
 }
 
 exports.get = function(id)

@@ -16,12 +16,11 @@ exports.addListener = function(soc)
 	});
 }
 
-sendSensor = function(id, val) {
-	var sensor = sm.get(id);
+sendSensor = function(sensor) {
 	if (sensor != undefined && sensor.host == '')
 	{
 		listeners.forEach(function(entry){
-		  entry.emit('sensor.update', { "id": id, "value": val });
+		  entry.emit('sensor.update', { "id": sensor.name, "value": sensor.value });
 		});
 	}
 }
@@ -38,6 +37,6 @@ setInterval(sendSensorList, 30000);
 
 
 
-sm.events.on("newSensor", function(id, value) { sendSensor(id, value); });
-sm.events.on("sensorChange", function(id, oldvalue, newvalue) { sendSensor(id, newvalue); });
+sm.events.on("newSensor", function(sensor) { sendSensor(sensor); });
+sm.events.on("sensorChange", function(sensor, oldvalue) { sendSensor(sensor); });
 sm.events.on("sensorsDeleted", function(pruned) { sendSensorList(); });

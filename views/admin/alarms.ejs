@@ -23,11 +23,11 @@ function sensorSelect(name, id)
         sensors.forEach(function (entry) {
 		if (entry.host != '')
 		{
-			if (entry.host != grp)
+			if (entry.host.id != grp)
 			{
 				
-			        res += "</optgroup><optgroup label='"+entry.host+"'>";
-				grp = entry.host;
+			        res += "</optgroup><optgroup label='"+entry.host.name+"'>";
+				grp = entry.host.id;
 			}
 			res += "<option value='"+entry.id+"' "+isSel(entry.id,id)+">"+entry.name+"</option>";
 		}
@@ -80,7 +80,11 @@ function addRow(alarm)
 {
 	if (typeof alarm.val  == "undefined") alarm.val = "";
         if (typeof alarm.name == "undefined") alarm.name = "";
-        if (typeof alarm.id   == "undefined") alarm.id = "";
+        if (typeof alarm.id   == "undefined"){
+		alarm.id = "";
+		alarm.active = 1;
+	}
+	
 
 
 	var row = '\
@@ -92,10 +96,12 @@ function addRow(alarm)
                      <td>'+targetSelect("target"+lines, alarm.target)+'</td>\
 		     <td>'+targetStateSelect("targetstate"+lines, alarm.targetstate)+'</td>\
 		     <td>'+chkbox("targetreverse"+lines, alarm.targetreverse)+'</td>\
-		     <td>'+chkbox("active"+lines, alarm.active)+'</td>\
-                     <td>'+chkbox("delete"+lines, 0)+'</td>\
-                   </tr>\
-	';
+		     <td>'+chkbox("active"+lines, alarm.active)+'</td>';
+	if (alarm.id != '') 
+		row += '<td>'+chkbox("delete"+lines, 0)+'</td>';
+	else 
+		row += "<td>&nbsp;</td>";
+	row += '</tr>';
 
 	new_row = $(row);
 	new_row.appendTo($('#alarms'));

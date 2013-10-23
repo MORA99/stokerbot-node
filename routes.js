@@ -45,6 +45,12 @@ while (typeof req.body['id'+id] != "undefined")
 }
 
 
+module.exports.admvirtual = function(req,res) {
+        res.render('admin/virtual', {
+                sensors: sm.list()
+        });
+}
+
 module.exports.admalarms = function(req,res) {
 	res.render('admin/alarms', {
 		sensors: sm.list(300, true),

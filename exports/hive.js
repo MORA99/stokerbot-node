@@ -31,15 +31,14 @@ connected = true;
 });
 
 socket.on('sensor', function (host, data) {
-  var id = host+'_'+data.name;
+  var id = host.id+'_'+data.name;
   sm.add(id,data.value,0,host,data.name);
 });
 
-function sendSensor(id, value)
+function sendSensor(sensor)
 {
-	var sensor = sm.get(id);
 	if (connected && sensor.host == '')
-		socket.emit('sensor', [{'name':id, 'value':value}]);
+		socket.emit('sensor', [{'name':sensor.id, 'value':sensor.value}]);
 }
 
 function sendSensors()
@@ -53,6 +52,6 @@ setInterval(sendSensors, 120000);//Send sensors every 30secs even if not changed
 //setInterval(connect, 60000);//Retry connection to stokerlog.dk every minute if its failed
 //connect();//Initial connect attempt
 
-sm.events.on("newSensor", function(id, value) { sendSensor(id, value); });
-sm.events.on("sensorChange", function(id, oldvalue, newvalue) { sendSensor(id, newvalue); });
+sm.events.on("newSensor", function(sensor) { sendSensor(sensor); });
+sm.events.on("sensorChange", function(sensor, oldValue) { sendSensor(sensor); });
 

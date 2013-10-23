@@ -91,10 +91,10 @@ var sm = require('./sensorManager.js');
 setTimeout(function(){
 
 	checkAlarms();
-	sm.events.on("sensorChange", function(id, oldvalue, newvalue) {
+	sm.events.on("sensorChange", function(sensor, oldValue) {
 
         	alarms.forEach(function(entry) {
-                	if (entry.source == id)
+                	if (entry.source == sensor.id)
 			{
 				handleAlarm(entry.id);
 			}

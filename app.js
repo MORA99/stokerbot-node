@@ -29,7 +29,7 @@ app.get('/admin/alarms', routes.admalarms);
 app.post('/admin/alarms', routes.admalarmssave);
 app.get('/admin/sensors', routes.admsensors);
 app.post('/admin/sensors', routes.admsensorssave);
-
+app.get('/admin/virtual', routes.admvirtual);
 
 app.get('/admin/sysinfo', routes.sysinfo);
 app.get('/admin/sysinfoajax', routes.sysinfoajax);

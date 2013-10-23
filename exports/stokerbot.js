@@ -2,8 +2,6 @@ var net = require('net');
 var sm = require('../backend/sensorManager.js');
 var constants = require('../constants.js');
 
-console.log("ID", constants);
-
 var HOST = 'web.xen1.dk';
 var PORT = 8888;
 
@@ -32,17 +30,18 @@ client.on('close', function() {
     connected = false;
 });
 
-function sendSensor(name, value)
+function sendSensor(sensor)
 {
 	if (connected && clientid != '')
-		client.write('{"command":"sensor","value":[{"name":"'+name+'","value":"'+value+'"}]}\r\n');
+		client.write('{"command":"sensor","value":[{"name":"'+sensor.id+'","value":"'+sensor.value+'"}]}\r\n');
 }
 
 
 function sendSensors()
 {
 	sm.list().forEach(function(entry) {
-		sendSensor(entry.id, entry.value);
+		console.log(entry);
+		if (entry.host == '') sendSensor(entry.id, entry.value);
 	});
 }
 
@@ -50,7 +49,7 @@ setInterval(sendSensors, 30000);//Send sensors every 30secs even if not changed
 setInterval(connect, 60000);//Retry connection to stokerlog.dk every minute if its failed
 connect();//Initial connect attempt
 
-sm.events.on("newSensor", function(id, value) { sendSensor(id, value); });
-sm.events.on("sensorChange", function(id, oldvalue, newvalue) { sendSensor(id, newvalue); });
+sm.events.on("newSensor", function(sensor) { sendSensor(sensor); });
+sm.events.on("sensorChange", function(sensor, oldvalue) { sendSensor(sensor); });
 
 

@@ -58,7 +58,7 @@ sensorChange = function(name, value) {
         });
 }
 
-sm.events.on("sensorChange", function(id, oldvalue, newvalue) { sensorChange(id, newvalue); });
+sm.events.on("sensorChange", function(sensor, oldValue) { sensorChange(sensor, sensor.value); });
 /*
 setInterval(function(){
 setTimeout(function(){sm.add("DO1", 1);},1000);
