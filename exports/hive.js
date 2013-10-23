@@ -48,7 +48,7 @@ function sendSensors()
         });
 }
 
-setInterval(sendSensors, 120000);//Send sensors every 30secs even if not changed
+setInterval(sendSensors, 30000);//Send sensors every 30secs even if not changed
 //setInterval(connect, 60000);//Retry connection to stokerlog.dk every minute if its failed
 //connect();//Initial connect attempt
 
